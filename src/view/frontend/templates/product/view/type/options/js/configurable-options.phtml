@@ -1,0 +1,18 @@
+<script>
+    window.initConfigurableOptions = new Proxy(window.initConfigurableOptions, {
+        apply(target, thisArg, argArray) {
+            const instance = target.apply(thisArg, argArray);
+
+            instance.init = new Proxy(instance.init, {
+                apply(target, thisArg, argArray) {
+                    target.apply(thisArg, argArray);
+
+                    const urlHashParams = new URLSearchParams(window.location.hash.replace('#',''));
+                    instance.preselectItemsBasedOnLocation(attribute => urlHashParams.get(attribute.code));
+                }
+            });
+
+            return instance;
+        }
+    })
+</script>
